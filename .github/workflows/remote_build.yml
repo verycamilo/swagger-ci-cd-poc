@@ -8,10 +8,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Store Spec
-        run:
-          - mkdir -p ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}
-          - echo "${{ github.event.client_payload.doc }}" | base64 -d > ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/openapi.yml
-          - cp template.tmpl ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/index.html
+        run: |
+          mkdir -p ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}
+          echo "${{ github.event.client_payload.doc }}" | base64 -d > ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/openapi.yml
+          cp template.tmpl ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/index.html
       - name: Commit Spec
         run: |
           git add ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/.
