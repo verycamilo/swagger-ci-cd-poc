@@ -12,7 +12,9 @@ jobs:
           mkdir -p ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}
           echo "${{ github.event.client_payload.doc }}" | base64 -d > ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/openapi.yml
           cp template.tmpl ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/index.html
-      - name: Commit Spec
+      - name: Push Documentation 
+        with:
+          github_token: ${{ secrets.SPECS_REPO_PAT }}
         run: |
           git config --global user.email "redwolf@vizio.com"
           git config --global user.name "Redwolf CI"
