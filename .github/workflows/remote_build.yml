@@ -14,6 +14,8 @@ jobs:
           cp template.tmpl ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/index.html
       - name: Commit Spec
         run: |
+          git config --global user.email "redwolf@vizio.com"
+          git config --global user.name "Redwolf CI"
           git add ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/.
           git commit -am "New version of ${{ github.event.client_payload.service }} documentation"
           git push
