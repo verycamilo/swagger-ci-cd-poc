@@ -1,7 +1,7 @@
 openapi: '3.0.2'
 info:
   title: Notification API
-  version: '1.5'
+  version: '1.6'
 components:
   schemas:
     raw_message:
