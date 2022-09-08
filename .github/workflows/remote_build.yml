@@ -1,13 +1,14 @@
 on:
   repository_dispatch:
     types: [process_openapi]
-env:
-    GITHUB_TOKEN: ${{ secrets.SPECS_REPO_PAT }}
+
 jobs:
   process_openapi:
     runs-on: ubuntu-latest    
     steps:      
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.SPECS_REPO_PAT }}
       - name: Store Spec
         run: |
           mkdir -p ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}
