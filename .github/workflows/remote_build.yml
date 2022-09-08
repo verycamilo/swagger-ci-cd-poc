@@ -11,9 +11,9 @@ jobs:
           token: ${{ secrets.SPECS_REPO_PAT }}
       - name: Store Spec
         run: |
-          mkdir -p ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}
-          echo "${{ github.event.client_payload.doc }}" | base64 -d > ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/openapi.yml
-          cp template.tmpl ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/index.html
+          mkdir -p specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}
+          echo "${{ github.event.client_payload.doc }}" | base64 -d > specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/openapi.yml
+          cp template.tmpl specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}/index.html
       - name: Push Documentation
 
         run: |
