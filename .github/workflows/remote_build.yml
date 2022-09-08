@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest    
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
       - name: Store Spec
         run: |
           mkdir -p ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}
@@ -15,6 +17,8 @@ jobs:
       - name: Push Documentation 
         env:
           GITHUB_TOKEN: ${{ secrets.SPECS_REPO_PAT }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+
         run: |
           git config --global user.email "redwolf@vizio.com"
           git config --global user.name "Redwolf CI"
