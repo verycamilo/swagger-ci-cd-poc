@@ -17,8 +17,6 @@ jobs:
       - name: Push Documentation 
         env:
           GITHUB_TOKEN: ${{ secrets.SPECS_REPO_PAT }}
-          ISSUE_URL: ${{ github.event.issue.html_url }}
-
         run: |
           git config --global user.email "redwolf@vizio.com"
           git config --global user.name "Redwolf CI"
