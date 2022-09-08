@@ -7,8 +7,6 @@ jobs:
     runs-on: ubuntu-latest    
     steps:
       - uses: actions/checkout@v2
-        with:
-          persist-credentials: false
       - name: Store Spec
         run: |
           mkdir -p ${{ github.event.client_payload.service }}/${{ github.event.client_payload.version }}
