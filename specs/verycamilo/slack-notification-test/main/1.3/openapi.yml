@@ -1,0 +1,143 @@
+openapi: '3.0.2'
+info:
+  title: Slack Notification API
+  version: '1.3'
+components:
+  schemas:
+    raw_message:
+      type: object
+      properties:
+        sender:
+          type: object
+          nullable: true 
+          properties:
+            origin:
+              type: string
+              description: |
+                The system of origin of the notification.
+              nullable: true
+              example: VIZIOGram
+        recipient:
+          type: object
+          nullable: false
+          properties:
+            userId:
+              type: number
+              description: |
+                This corresponds to a VIZIO Account userId. Note: this uses the internal auto incrementing id provided by Ping Identity 
+              nullable: false
+            devices:
+              type: array
+              description: |
+                Enables targed device delivery of a notification to devices that are specified in this list. 
+                If no items are specified or this field is null, a message will be sent to every device registered for the specified userId.
+              items:
+                type: string
+                format: uuid
+                description: Device Id
+              nullable: true
+        schema:
+          type: string
+          format: uri
+          nullable: false
+          description: |
+            URI pointing to a JSON schema file that the notifications service will use to validate the incoming payload. 
+            If the payload does not match the specified scheme the request will be rejected.
+        payload:
+          type: object
+          nullable: false
+
+    postmarked_message:
+      type: object
+      properties:
+        recipient:
+          type: object
+          nullable: false
+          properties:
+            userId:
+              type: number
+              description: |
+                This corresponds to a VIZIO Account userId. Note: this uses the internal auto incrementing id provided by Ping Identity 
+              nullable: false
+            devices:
+              type: array
+              description: |
+                Enables targed device delivery of a notification to devices that are specified in this list. 
+                If no items are specified or this field is null, a message will be sent to every device registered for the specified userId.
+              items:
+                type: string
+                format: uuid
+                description: Device Id
+              nullable: true
+        schema:
+          type: string
+          format: uri
+          nullable: false
+          description: |
+            URI pointing to a JSON schema file that the notifications service will use to validate the incoming payload. 
+            If the payload does not match the specified scheme the request will be rejected.
+        payload:
+          type: object
+          nullable: false
+        sent:
+          type: string 
+          format: date-time
+
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /v1/notify:
+    post:
+      security:
+        - bearerAuth: [jwt]
+      tags:
+        - v1
+      description: |
+        Post notification to a VIZIO Account user. 
+          - If no devices are specified notification will be sent to all of the users devices.
+          - If devices are specified notifications will be sent to only specified devices.
+        Request sent to braze: https://www.braze.com/docs/api/endpoints/messaging/send_messages/post_send_messages/ and is returned back and processed through the webhook.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/raw_message'
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '429':
+          description: Rate limit exceeded
+        '500':
+          description: Error
+
+  /v1/webhook:
+    post:
+      security:
+        - bearerAuth: [jwt]
+      tags:
+        - v1
+      description: 'webhook endpoint for core services only. not for Viziogram or other uses. '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/postmarked_message'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request
+        '429':
+          description: Rate limit exceeded.
+        '500':
+          description: Error
+
