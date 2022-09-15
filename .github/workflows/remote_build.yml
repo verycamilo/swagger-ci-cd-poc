@@ -18,7 +18,7 @@ jobs:
           echo "${{ github.event.client_payload.doc }}" | base64 -d > $SPEC_PATH/openapi.yml
       - name: Build Service Index
         run: |
-          gem install mustache
+          sudo gem install mustache
           echo "${{ github.event.client_payload }}" > data.json
           mustache data.json templates/service-index.mustache > $SPEC_PATH/index.html
           
