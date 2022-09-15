@@ -21,7 +21,7 @@ jobs:
           sudo gem install mustache
           export SPEC_PATH=specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.stage }}/${{ github.event.client_payload.version }}
           echo $SPEC_PATH
-          echo "${{ github.event.client_payload }}" > data.json
+          echo "${{ toJson(github.event.client_payload) }}" > data.json
           cat data.json
           mustache data.json templates/service-index.mustache > $SPEC_PATH/index.html
           
