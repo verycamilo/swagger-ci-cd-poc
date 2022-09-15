@@ -12,19 +12,16 @@ jobs:
         with:
           token: ${{ secrets.SPECS_REPO_PAT }}
       - name: Store new Documentation
-        run: |
+        run: |        
           export SPEC_PATH=specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.stage }}/${{ github.event.client_payload.version }}
           mkdir -p $SPEC_PATH
           echo "${{ github.event.client_payload.doc }}" | base64 -d > $SPEC_PATH/openapi.yml
       - name: Build Service Index
-        uses: edgardleal/mustache-template-action@v1.0.0
-        env:
-          TITLE: "${{ github.event.client_payload.title }}"
-          STAGE: "${{ github.event.client_payload.stage }}"
-          VERSION: "${{ github.event.client_payload.version }}"
-        with:
-          input: templates/service-index.tmpl
-          output: specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.stage }}/${{ github.event.client_payload.version }}/index.html
+        run: |
+          gem install mustache
+          echo "${{ github.event.client_payload }}" > data.json
+          mustache data.json templates/service-index.mustache > $SPEC_PATH/index.html
+          
 
       - name: Push Documentation
         run: |
