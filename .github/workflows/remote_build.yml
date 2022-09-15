@@ -19,9 +19,9 @@ jobs:
       - name: Build Service Index
         uses: edgardleal/mustache-template-action@v1.0.0
         env:
-          TITLE: ${{ github.event.client_payload.title }}
-          STAGE: ${{ github.event.client_payload.stage }}
-          VERSION: ${{ github.event.client_payload.version }}
+          TITLE: "${{ github.event.client_payload.title }}"
+          STAGE: "${{ github.event.client_payload.stage }}"
+          VERSION: "${{ github.event.client_payload.version }}"
         with:
           input: templates/service-index.tmpl
           output: specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.stage }}/${{ github.event.client_payload.version }}/index.html
