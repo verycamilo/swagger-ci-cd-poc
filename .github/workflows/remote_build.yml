@@ -16,6 +16,7 @@ jobs:
           export SPEC_PATH=specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.stage }}/${{ github.event.client_payload.version }}
           mkdir -p $SPEC_PATH
           echo "${{ github.event.client_payload.doc }}" | base64 -d > $SPEC_PATH/openapi.yml
+
       - name: Build Service Index
         run: |
           sudo gem install mustache
@@ -24,7 +25,26 @@ jobs:
           echo "${{ toJson(github.event.client_payload) }}" > data.json
           cat data.json
           mustache data.json templates/service-index.mustache > $SPEC_PATH/index.html
-          
+
+      - name: Build document Index
+        run: |
+          SERVICES_PATHS=$(find specs -mindepth 2 -maxdepth 2 -type d)
+          echo "services paths: $SERVICES_PATHS"
+          for service_path in $SERVICES_PATHS
+          do
+            SERVICE=$(basename $service_path)
+            FILES=$(find $service_path -type f -name "*.yml"  | sort -d)
+            for file in $FILES
+            do
+              LAST=$file
+            done
+            export TITLE=$(cat $LAST | yq .info.title)
+            export DESCRIPTION=$(cat $LAST | yq .info.description)
+            export VERSION=$(cat $LAST | yq .info.version)
+            export FILE_PATH=$(dirname $LAST)
+            jq -n --arg TITLE "$TITLE" --arg DESCRIPTION "$DESCRIPTION" --arg VERSION "$VERSION" --arg FILE_PATH "$FILE_PATH" '{ title: $TITLE, description: $DESCRIPTION, version: $VERSION, path: $FILE_PATH }'
+          done | jq -n -s '{ items: inputs }' > services.json
+          mustache services.json templates/main-index.mustache > index.html
 
       - name: Push Documentation
         run: |
