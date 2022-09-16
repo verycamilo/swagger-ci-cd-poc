@@ -1,0 +1,36 @@
+name: Update Documentation
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        required: true
+      documentation_path:
+        required: true
+      documentation_repository:
+        required: true
+
+jobs:
+  update-documentation:
+    name: Send Request to Process Documentation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Send API Request
+        run: |
+          export BASE64_APIDOC=$(cat ${{ github.workspace }}/${{ secrets.documentation_path }}  | base64)
+          export TITLE=$(cat ${{ secrets.documentation_path }} | yq .info.title)
+          export DESCRIPTION=$(cat ${{ secrets.documentation_path }} | yq .info.description)
+          export VERSION=$(cat ${{ secrets.documentation_path }} | yq .info.version)
+          export PAYLOAD_TEMPLATE='{ "event_type":"process_openapi","client_payload":{ "service": "${{ github.event.repository.full_name }}", "version": "VERSION", "doc": "BASE64_APIDOC", "title":"TITLE", "stage": "${{ github.event.workflow_run.head_branch}}", "description": "DESCRIPTION" } }'
+          echo $PAYLOAD_TEMPLATE | jq --arg BASE64_APIDOC "${BASE64_APIDOC}" --arg TITLE "${TITLE}" --arg VERSION "${VERSION}" --arg DESCRIPTION "${DESCRIPTION}" '.client_payload.doc = $BASE64_APIDOC | .client_payload.title = $TITLE | .client_payload.version=$VERSION | .client_payload.description=$DESCRIPTION ' > payload.json
+          cat payload.json
+          curl -v  \
+          --fail \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.token }}" \
+          --url ${{ secrets.documentation_repository }}/dispatches \
+          -d @payload.json
