@@ -5,9 +5,15 @@ on:
     secrets:
       token:
         required: true
+    inputs:
       documentation_path:
+        type: string
         required: true
       documentation_repository:
+        type: string
+        required: true
+      stage:
+        type: string
         required: true
 
 jobs:
@@ -20,17 +26,16 @@ jobs:
         uses: actions/checkout@v3
       - name: Send API Request
         run: |
-          export BASE64_APIDOC=$(cat ${{ github.workspace }}/${{ secrets.documentation_path }}  | base64)
-          export TITLE=$(cat ${{ secrets.documentation_path }} | yq .info.title)
-          export DESCRIPTION=$(cat ${{ secrets.documentation_path }} | yq .info.description)
-          export VERSION=$(cat ${{ secrets.documentation_path }} | yq .info.version)
-          export PAYLOAD_TEMPLATE='{ "event_type":"process_openapi","client_payload":{ "service": "${{ github.event.repository.full_name }}", "version": "VERSION", "doc": "BASE64_APIDOC", "title":"TITLE", "stage": "${{ github.event.workflow_run.head_branch}}", "description": "DESCRIPTION" } }'
+          export BASE64_APIDOC=$(cat ${{ github.workspace }}/${{ inputs.documentation_path }}  | base64)
+          export TITLE=$(cat ${{ inputs.documentation_path }} | yq .info.title)
+          export DESCRIPTION=$(cat ${{ inputs.documentation_path }} | yq .info.description)
+          export VERSION=$(cat ${{ inputs.documentation_path }} | yq .info.version)
+          export PAYLOAD_TEMPLATE='{ "event_type":"process_openapi","client_payload":{ "service": "${{ github.event.repository.full_name }}", "version": "VERSION", "doc": "BASE64_APIDOC", "title":"TITLE", "stage": "${{ inputs.stage }}", "description": "DESCRIPTION" } }'
           echo $PAYLOAD_TEMPLATE | jq --arg BASE64_APIDOC "${BASE64_APIDOC}" --arg TITLE "${TITLE}" --arg VERSION "${VERSION}" --arg DESCRIPTION "${DESCRIPTION}" '.client_payload.doc = $BASE64_APIDOC | .client_payload.title = $TITLE | .client_payload.version=$VERSION | .client_payload.description=$DESCRIPTION ' > payload.json
-          cat payload.json
           curl -v  \
           --fail \
           -X POST \
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ secrets.token }}" \
-          --url ${{ secrets.documentation_repository }}/dispatches \
+          --url ${{ inputs.documentation_repository }}/dispatches \
           -d @payload.json

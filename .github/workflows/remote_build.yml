@@ -1,4 +1,4 @@
-name: Process new Documentation
+name: Process New Documentation
 
 on:
   repository_dispatch:
@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.SPECS_REPO_PAT }}
-      - name: Store new Documentation
+      - name: Store New Documentation
         run: |        
           export SPEC_PATH=specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.stage }}/${{ github.event.client_payload.version }}
           mkdir -p $SPEC_PATH
@@ -26,7 +26,7 @@ jobs:
           cat data.json
           mustache data.json templates/service-index.mustache > $SPEC_PATH/index.html
 
-      - name: Build document Index
+      - name: Build Document Index
         run: |
           SERVICES_PATHS=$(find specs -mindepth 2 -maxdepth 2 -type d)
           echo "services paths: $SERVICES_PATHS"
@@ -49,8 +49,8 @@ jobs:
       - name: Push Documentation
         run: |
           export SPEC_PATH=specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.stage }}/${{ github.event.client_payload.version }}
-          git config --global user.email "redwolf@vizio.com"
-          git config --global user.name "Redwolf CI"
+          git config --global user.email "ci_bot@vizio.com"
+          git config --global user.name "Vizio CI Bot"
           git add $SPEC_PATH/.
           git commit -am "Version ${{ github.event.client_payload.version }} of ${{ github.event.client_payload.service }} for ${{ github.event.client_payload.stage }} updated"
-          git push origin main
+          git push
