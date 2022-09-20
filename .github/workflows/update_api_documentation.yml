@@ -42,11 +42,15 @@ jobs:
     needs: setup
     name: Send Request to Process Documentation
     runs-on: ubuntu-latest
-    if: contains(fromJSON('["develop", "stage", "preprod", "prod"]'), needs.setup.outputs.stage )
+    
     steps:
+      - name: Echo Output
+        run: |
+          echo "Stage: ${{needs.setup.outputs.stage}}"
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Send API Request
+        if: contains(fromJSON('["develop", "stage", "preprod", "prod"]'), needs.setup.outputs.stage )
         run: |
           export BASE64_APIDOC=$(cat ${{ github.workspace }}/${{ inputs.documentation_path }}  | base64)
           export TITLE=$(cat ${{ inputs.documentation_path }} | yq .info.title)
