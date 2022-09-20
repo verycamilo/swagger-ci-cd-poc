@@ -26,11 +26,11 @@ jobs:
     steps:
       - id: set-stage
         run: |
-          if [[ ${{ github.event.workflow_run.head_branch }} =~ ${{ fromJSON(inputs.stage_pattern_map).prod }} ]]
+          if [[ "${{ github.event.workflow_run.head_branch }}" =~ ${{ fromJSON(inputs.stage_pattern_map).prod }} ]]
           then
               echo "::set-output name=stage::prod"
               echo "Matches prod"
-          elif [[ ${{ github.event.workflow_run.head_branch }} =~ ${{ fromJSON(inputs.stage_pattern_map).stage }} ]]
+          elif [[ "${{ github.event.workflow_run.head_branch }}" =~ ${{ fromJSON(inputs.stage_pattern_map).stage }} ]]
           then
               echo "::set-output name=stage::stage"
               echo "Matches stage"
