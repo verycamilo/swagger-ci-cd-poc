@@ -29,11 +29,14 @@ jobs:
           if [[ ${{ github.event.workflow_run.head_branch }} =~ ${{ fromJSON(inputs.stage_pattern_map).prod }} ]]
           then
               echo "::set-output name=stage::prod"
+              echo "Matches prod"
           elif [[ ${{ github.event.workflow_run.head_branch }} =~ ${{ fromJSON(inputs.stage_pattern_map).stage }} ]]
           then
               echo "::set-output name=stage::stage"
+              echo "Matches stage"
           else
             echo "::set-output name=stage::${{ github.event.workflow_run.head_branch }}"
+            echo "No matches, going to use stage: ${{ github.event.workflow_run.head_branch }}"
           fi
   update-documentation:
     needs: setup
