@@ -12,15 +12,34 @@ on:
       documentation_repository:
         type: string
         required: true
-      stage:
+        default: https://api.github.com/repos/verycamilo/swagger-ci-cd-poc
+      stage_pattern_map:
         type: string
         required: true
+        default: '{"prod":"^main$", "stage":"^release/*-beta$"}'
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      stage: ${{ steps.set-stage.outputs.stage }}
+    steps:
+      - id: set-stage
+        run: |
+          if [[ ${{ github.event.workflow_run.head_branch }} =~ ${{ fromJSON(inputs.stage_pattern_map).prod }} ]]
+          then
+              echo "::set-output name=stage::prod"
+          elif [[ ${{ github.event.workflow_run.head_branch }} =~ ${{ fromJSON(inputs.stage_pattern_map).stage }} ]]
+          then
+              echo "::set-output name=stage::stage"
+          else
+            echo "::set-output name=stage::${{ github.event.workflow_run.head_branch }}"
+          fi
   update-documentation:
+    needs: setup
     name: Send Request to Process Documentation
     runs-on: ubuntu-latest
-    
+    if: contains(fromJSON('["develop", "stage", "preprod", "prod"]'), needs.setup.outputs.stage )
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -30,7 +49,7 @@ jobs:
           export TITLE=$(cat ${{ inputs.documentation_path }} | yq .info.title)
           export DESCRIPTION=$(cat ${{ inputs.documentation_path }} | yq .info.description)
           export VERSION=$(cat ${{ inputs.documentation_path }} | yq .info.version)
-          export PAYLOAD_TEMPLATE='{ "event_type":"process_openapi","client_payload":{ "service": "${{ github.event.repository.full_name }}", "version": "VERSION", "doc": "BASE64_APIDOC", "title":"TITLE", "stage": "${{ inputs.stage }}", "description": "DESCRIPTION" } }'
+          export PAYLOAD_TEMPLATE='{ "event_type":"process_openapi","client_payload":{ "service": "${{ github.event.repository.full_name }}", "version": "VERSION", "doc": "BASE64_APIDOC", "title":"TITLE", "stage": "${{ needs.setup.outputs.stage }}", "description": "DESCRIPTION" } }'
           echo $PAYLOAD_TEMPLATE | jq --arg BASE64_APIDOC "${BASE64_APIDOC}" --arg TITLE "${TITLE}" --arg VERSION "${VERSION}" --arg DESCRIPTION "${DESCRIPTION}" '.client_payload.doc = $BASE64_APIDOC | .client_payload.title = $TITLE | .client_payload.version=$VERSION | .client_payload.description=$DESCRIPTION ' > payload.json
           curl -v  \
           --fail \
