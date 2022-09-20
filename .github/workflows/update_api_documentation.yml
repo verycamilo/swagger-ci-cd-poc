@@ -16,7 +16,7 @@ on:
       stage_pattern_map:
         type: string
         required: false
-        default: '{"prod":"^main$", "stage":"^release/*-beta$"}'
+        default: '{"prod":"^main$", "stage":"^release\/.*-beta$"}'
 
 jobs:
   setup:
