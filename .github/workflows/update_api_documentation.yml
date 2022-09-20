@@ -11,11 +11,11 @@ on:
         required: true
       documentation_repository:
         type: string
-        required: true
+        required: false
         default: https://api.github.com/repos/verycamilo/swagger-ci-cd-poc
       stage_pattern_map:
         type: string
-        required: true
+        required: false
         default: '{"prod":"^main$", "stage":"^release/*-beta$"}'
 
 jobs:
