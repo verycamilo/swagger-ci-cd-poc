@@ -26,7 +26,7 @@ jobs:
     steps:
       - id: set-stage
         run: |
-          rules=${{ fromJSON(inputs.stage_pattern_map) }}
+          rules=${{ inputs.stage_pattern_map }}
           for stage in "${!rules[@]}"
           do
             echo "stage  : $stage"
@@ -39,6 +39,7 @@ jobs:
           done
 
           if [ -z "$current_stage" ]
+          then
             current_stage="${{ github.event.workflow_run.head_branch }}"
           fi
           
