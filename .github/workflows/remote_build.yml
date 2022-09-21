@@ -25,9 +25,11 @@ jobs:
           echo "${{ toJson(github.event.client_payload) }}" > data.json
           cat data.json
           mustache data.json templates/service-index.mustache > $SPEC_PATH/index.html
+          echo "Going to create stage index"
           mustache data.json templates/redirect-stage-index.mustache > specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.stage }}/index.html
           if [[ "${{ github.event.client_payload.stage }}" == 'prod' ]]
           then
+            echo "Going to create service index"
             mustache data.json templates/redirect-index.mustache > specs/${{ github.event.client_payload.service }}/index.html
           fi
       - name: Build Document Index
@@ -52,7 +54,7 @@ jobs:
 
       - name: Push Documentation
         run: |
-          export SPEC_PATH=specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.stage }}/${{ github.event.client_payload.version }}
+          export SPEC_PATH=specs/${{ github.event.client_payload.service }}
           git config --global user.email "ci_bot@vizio.com"
           git config --global user.name "Vizio CI Bot"
           git add $SPEC_PATH/.
