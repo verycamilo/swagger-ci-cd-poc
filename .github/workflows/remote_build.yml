@@ -25,7 +25,11 @@ jobs:
           echo "${{ toJson(github.event.client_payload) }}" > data.json
           cat data.json
           mustache data.json templates/service-index.mustache > $SPEC_PATH/index.html
-
+          mustache data.json templates/redirect-stage-index.mustache > specs/${{ github.event.client_payload.service }}/${{ github.event.client_payload.stage }}/index.html
+          if [["${{ github.event.client_payload.stage }}" = 'prod']]
+          then
+            mustache data.json templates/redirect-index.mustache > specs/${{ github.event.client_payload.service }}/index.html
+          fi
       - name: Build Document Index
         run: |
           SERVICES_PATHS=$(find specs -mindepth 2 -maxdepth 2 -type d)

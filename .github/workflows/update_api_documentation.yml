@@ -26,25 +26,18 @@ jobs:
     steps:
       - id: set-stage
         run: |
-          rules=${{ inputs.stage_pattern_map }}
-          for stage in "${!rules[@]}"
-          do
-            echo "stage  : $stage"
-            echo "pattern: ${rules[$stage]}"
-            if [[ "${{ github.event.workflow_run.head_branch }}" =~ ${rules[$stage]} ]]
-            then
-                current_stage=$stage
-                echo "Matches $stage"
-            fi
-          done
-
-          if [ -z "$current_stage" ]
+          if [[ "${{ github.event.workflow_run.head_branch }}" =~ ${{ fromJSON(inputs.stage_pattern_map).prod }} ]]
           then
-            current_stage="${{ github.event.workflow_run.head_branch }}"
+              echo "Matches prod"
+              echo "::set-output name=stage::prod"
+          elif [[ "${{ github.event.workflow_run.head_branch }}" =~ ${{ fromJSON(inputs.stage_pattern_map).stage }} ]]
+          then
+              echo "Matches stage"
+              echo "::set-output name=stage::stage"
+          else
+            echo "No matches, going to use stage: ${{ github.event.workflow_run.head_branch }}"
+            echo "::set-output name=stage::${{ github.event.workflow_run.head_branch }}"
           fi
-          
-          echo "::set-output name=stage::$current_stage"
-
   update-documentation:
     needs: setup
     name: Send Request to Process Documentation
