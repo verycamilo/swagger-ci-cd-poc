@@ -1,0 +1,255 @@
+swagger: '2.0'
+info:
+  description: Redwolf Proxy Gateway
+  version: '1.3.0'
+  title: redwolf-proxy-gateway
+host: "prod.redwolf.external.plat.vizio.com"
+schemes:
+  - https
+paths:
+  /challenge:
+    get:
+      responses:
+        '200':
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+    options:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Empty'
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Credentials:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+  /consent-management:
+    options:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Empty'
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+
+  /consent-management/{proxy}:
+    options:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Empty'
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+      
+  /coupons-api/{proxy}:
+    options:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Empty'
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+  /myvizio-api/{proxy}:
+    options:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Empty'
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+  /partner-svc/{proxy}:
+    options:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Empty'
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+  /pay-data-analytics-pipeline/{proxy}:
+    options:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Empty'
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+  /pii/{proxy}:
+    options:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Empty'
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+  /pin-svc/{proxy}:
+    options:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Empty'
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+  /robots.txt:
+    get:
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Empty'
+  /subscriptions-api/{proxy}:
+    options:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Empty'
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Headers:
+              type: string
+definitions:
+  Empty:
+    type: object
+    title: Empty Schema
